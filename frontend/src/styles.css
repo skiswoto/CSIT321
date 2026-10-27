@@ -1,0 +1,359 @@
+/* Plain CSS for the prototype. Colours are defined once here. */
+:root {
+  --text: #1d2330;
+  --muted: #5b6475;
+  --border: #d9dde5;
+  --surface: #ffffff;
+  --background: #f5f6f8;
+  --accent: #2b5fd9;
+  --high: #b42318;
+  --medium: #b54708;
+  --low: #346b2e;
+  --info: #475467;
+  --demo: #7a5af8;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--background);
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.9em;
+  word-break: break-all;
+}
+
+/* Header and demo labels */
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+}
+
+.site-header h1 {
+  font-size: 1.1rem;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.site-header a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.demo-banner {
+  background: var(--demo);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.demo-tag {
+  display: inline-block;
+  border: 1px solid var(--demo);
+  color: var(--demo);
+  border-radius: 4px;
+  padding: 0 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* Buttons and messages */
+button,
+.button {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.55rem 1rem;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.error {
+  color: var(--high);
+}
+
+.hint {
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+/* Upload form */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.upload-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 500;
+}
+
+.upload-form label.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: normal;
+}
+
+.upload-form fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.upload-form legend {
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.upload-form button {
+  align-self: flex-start;
+}
+
+/* Stage list */
+.stage-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.stage {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.stage:last-child {
+  border-bottom: none;
+}
+
+.stage-number {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  background: var(--background);
+  border: 1px solid var(--border);
+}
+
+.stage-name {
+  flex: 1;
+}
+
+.stage-state {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stage-running .stage-state {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.stage-done .stage-number {
+  background: var(--low);
+  border-color: var(--low);
+  color: #fff;
+}
+
+.stage-failed .stage-state {
+  color: var(--high);
+}
+
+/* Severity badges and summary */
+.badge {
+  display: inline-block;
+  min-width: 4rem;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.severity-high { background: var(--high); }
+.severity-medium { background: var(--medium); }
+.severity-low { background: var(--low); }
+.severity-info { background: var(--info); }
+
+.summary {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.summary-table {
+  border-collapse: collapse;
+}
+
+.summary-table th,
+.summary-table td {
+  border: 1px solid var(--border);
+  padding: 0.4rem 1rem;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+/* Finding card */
+.finding-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  break-inside: avoid;
+}
+
+.finding-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.finding-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.finding-card h4 {
+  margin: 1rem 0 0.3rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.finding-meta,
+.evidence-timing,
+.report-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0.75rem 0 0;
+}
+
+.finding-meta dt,
+.evidence-timing dt,
+.report-details dt {
+  color: var(--muted);
+}
+
+.finding-meta dd,
+.evidence-timing dd,
+.report-details dd {
+  margin: 0;
+}
+
+.evidence-code {
+  display: block;
+  background: var(--background);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+
+.finding-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-left: 3px solid var(--medium);
+  padding-left: 0.75rem;
+}
+
+.finding-reference {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Report */
+.report-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Printing: hide navigation, keep the demo banner so printouts stay labelled */
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  :root {
+    background: #fff;
+  }
+
+  .demo-banner {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .badge,
+  .stage-done .stage-number {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+@media (max-width: 560px) {
+  .finding-meta,
+  .evidence-timing,
+  .report-details {
+    grid-template-columns: 1fr;
+  }
+
+  .finding-meta dd,
+  .evidence-timing dd,
+  .report-details dd {
+    margin-bottom: 0.4rem;
+  }
+}
