@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Remediation, Report } from '../../api/types';
+import type { Report } from '../../api/types';
 import { DemoTag } from '../DemoBanner';
 import { SeverityBadge } from '../SeverityBadge';
 import { SEVERITY_ORDER } from '../labels';
@@ -11,20 +11,13 @@ import { TimingTab } from './TimingTab';
 const TABS = ['Findings', 'Static', 'Timing', 'Environment'] as const;
 type Tab = (typeof TABS)[number];
 
-interface ReportViewProps {
-  report: Report;
-  remediations: Record<string, Remediation>;
-}
-
 // The completed state of the job page: a severity summary and four tabs.
 // All four tab panels are rendered; the inactive ones are hidden on screen
 // but shown when printing, so a printed report contains everything.
-export function ReportView({ report, remediations }: ReportViewProps) {
+// The counts come from the report's summary, which the backend works out.
+export function ReportView({ report }: { report: Report }) {
   const [activeTab, setActiveTab] = useState<Tab>('Findings');
-
-  // Counts for the summary. Severity only exists on DETECTED findings.
-  const detected = report.findings.filter((f) => f.status === 'DETECTED');
-  const countFor = (status: string) => report.findings.filter((f) => f.status === status).length;
+  const { summary } = report;
 
   return (
     <section className="report">
@@ -43,12 +36,11 @@ export function ReportView({ report, remediations }: ReportViewProps) {
       <ul className="summary" aria-label="Detected findings by severity">
         {SEVERITY_ORDER.map((severity) => (
           <li key={severity}>
-            <SeverityBadge severity={severity} />{' '}
-            {detected.filter((f) => f.severity === severity).length}
+            <SeverityBadge severity={severity} /> {summary.by_severity[severity]}
           </li>
         ))}
-        <li>Needs dynamic confirmation: {countFor('NEEDS_DYNAMIC_CONFIRMATION')}</li>
-        <li>Inconclusive: {countFor('INCONCLUSIVE')}</li>
+        <li>Needs dynamic confirmation: {summary.by_status.NEEDS_DYNAMIC_CONFIRMATION}</li>
+        <li>Inconclusive: {summary.by_status.INCONCLUSIVE}</li>
       </ul>
 
       <div className="tabs no-print" role="tablist">
@@ -68,7 +60,7 @@ export function ReportView({ report, remediations }: ReportViewProps) {
       </div>
 
       <div role="tabpanel" id="panel-Findings" aria-labelledby="tab-Findings" hidden={activeTab !== 'Findings'}>
-        <FindingsTab findings={report.findings} remediations={remediations} />
+        <FindingsTab findings={report.findings} remediations={report.remediations} />
       </div>
       <div role="tabpanel" id="panel-Static" aria-labelledby="tab-Static" hidden={activeTab !== 'Static'}>
         <StaticTab findings={report.findings} limits={report.analysis_limits} />

@@ -135,12 +135,27 @@ export interface Report {
   stages: Stage[];
   analysis_limits: AnalysisLimits;
   findings: Finding[];
+  // Counts worked out by the backend (FR-FND-10), so the screen and the JSON
+  // export show the same numbers.
+  summary: Summary;
+  // The fix templates used by this report's findings, keyed by remediation_id,
+  // so a report (and its export) is complete on its own.
+  remediations: Record<string, Remediation>;
 }
 
-// A remediation template, looked up by a finding's remediation_id.
-// PRD 5.1.4 says templates hold an explanation, a secure pattern, a
-// documentation reference and a re-test step. How templates reach the
-// frontend is not in the API contract yet.
+// TODO(Shawn, Yi Hong): proposed shape. PRD 5.1.4's example summary only
+// counts by status (detected, inconclusive, not_detected); FR-FND-10 asks for
+// counts by severity, status and technique, so this has all three.
+export interface Summary {
+  by_severity: Record<Severity, number>; // DETECTED findings only
+  by_status: Record<FindingStatus, number>;
+  by_technique: Record<Technique, number>;
+}
+
+// A remediation template, referenced by a finding's remediation_id.
+// Note: FR-FND-11 says a template holds an explanation, a secure pattern, a
+// documentation reference and a re-test step. These fields cover the action,
+// re-test and reference only, as in the PRD 5.1.4 remediation table.
 export interface Remediation {
   remediation_id: string;
   action: string;

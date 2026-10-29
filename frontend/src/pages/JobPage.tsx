@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { ApiError, getJob, getRemediations, getReport } from '../api/mockApi';
-import type { Job, Remediation, Report } from '../api/types';
+import { ApiError, getJob, getReport } from '../api/mockApi';
+import type { Job, Report } from '../api/types';
 import { StageList } from '../components/StageList';
 import { STAGE_STATE_LABELS } from '../components/labels';
 import { ReportView } from '../components/report/ReportView';
@@ -22,7 +22,6 @@ export function JobPage() {
 function JobView({ jobId }: { jobId: string }) {
   const [job, setJob] = useState<Job | null>(null);
   const [report, setReport] = useState<Report | null>(null);
-  const [remediations, setRemediations] = useState<Record<string, Remediation>>({});
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,10 +37,9 @@ function JobView({ jobId }: { jobId: string }) {
         if (latest.status === 'PENDING' || latest.status === 'RUNNING') {
           timer = setTimeout(poll, POLL_INTERVAL_MS);
         } else if (latest.status === 'SUCCESS' || latest.status === 'PARTIAL') {
-          const [fullReport, templates] = await Promise.all([getReport(jobId), getRemediations()]);
+          const fullReport = await getReport(jobId);
           if (cancelled) return;
           setReport(fullReport);
-          setRemediations(templates);
         }
       } catch (err) {
         if (!cancelled) setError(err instanceof ApiError ? err.message : 'Could not load the job.');
@@ -70,7 +68,7 @@ function JobView({ jobId }: { jobId: string }) {
 
   if (!job) return <p>Loading...</p>;
 
-  if (report) return <ReportView report={report} remediations={remediations} />;
+  if (report) return <ReportView report={report} />;
 
   return (
     <section>

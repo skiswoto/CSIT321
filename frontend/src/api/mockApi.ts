@@ -1,7 +1,7 @@
 // Mock version of the backend API in PRD section 6.3.
 //
-// Every page gets its data through the functions in this file. Each of the
-// first four matches one endpoint of the API contract. To connect the real
+// Every page gets its data through the functions in this file. Each one
+// matches one endpoint of the API contract. To connect the real
 // backend, write a module with the same function names that calls fetch(),
 // and change the imports. Nothing else in the app needs to change.
 //
@@ -13,11 +13,13 @@ import { remediations } from './remediations';
 import {
   STAGE_NAMES,
   type CreateJobRequest,
+  type Finding,
   type Job,
   type JobSummary,
   type Remediation,
   type Report,
   type Stage,
+  type Summary,
 } from './types';
 
 // Tells the UI to show demonstration labels. The real API module will set this to false.
@@ -108,7 +110,43 @@ export async function getReport(jobId: string): Promise<Report> {
   if (job.status !== 'SUCCESS' && job.status !== 'PARTIAL') {
     throw new ApiError('The report is not ready yet.');
   }
-  return { ...exampleReport, job_id: jobId };
+  const findings = exampleReport.findings;
+  return {
+    ...exampleReport,
+    job_id: jobId,
+    summary: buildSummary(findings),
+    remediations: templatesFor(findings),
+  };
+}
+
+// The two helpers below stand in for work the real backend does when it
+// builds a report. The frontend only displays the result.
+
+// Counts findings by severity (DETECTED only), status and technique.
+function buildSummary(findings: Finding[]): Summary {
+  const summary: Summary = {
+    by_severity: { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0, INFO: 0 },
+    by_status: { DETECTED: 0, NOT_DETECTED: 0, INCONCLUSIVE: 0, NEEDS_DYNAMIC_CONFIRMATION: 0, NOT_APPLICABLE: 0 },
+    by_technique: { static: 0, dynamic: 0, inferred: 0 },
+  };
+  for (const finding of findings) {
+    summary.by_status[finding.status] += 1;
+    summary.by_technique[finding.technique] += 1;
+    if (finding.status === 'DETECTED' && finding.severity) {
+      summary.by_severity[finding.severity] += 1;
+    }
+  }
+  return summary;
+}
+
+// Picks out the fix templates that this report's findings refer to.
+function templatesFor(findings: Finding[]): Record<string, Remediation> {
+  const used: Record<string, Remediation> = {};
+  for (const finding of findings) {
+    const id = finding.remediation_id;
+    if (id && remediations[id]) used[id] = remediations[id];
+  }
+  return used;
 }
 
 // GET /api/jobs
@@ -126,12 +164,4 @@ export async function listJobs(): Promise<JobSummary[]> {
     app_name: job.appName,
   }));
   return [example, ...created];
-}
-
-// Remediation templates, keyed by remediation_id.
-// TODO(Shawn): no endpoint for this yet. Decide whether the report includes
-// the templates it uses or the API serves them separately.
-export async function getRemediations(): Promise<Record<string, Remediation>> {
-  await delay();
-  return remediations;
 }

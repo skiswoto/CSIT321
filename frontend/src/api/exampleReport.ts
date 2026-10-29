@@ -10,7 +10,9 @@ import type { Report } from './types';
 const TBC = 'TBC (pinned in PoC)';
 const RULE_SET = '0.1';
 
-export const exampleReport: Report = {
+// The summary and the fix templates are added by getReport in mockApi.ts, the
+// same way the real backend adds them when it builds a report.
+export const exampleReport: Omit<Report, 'summary' | 'remediations'> = {
   schema_version: '1.0',
   job_id: 'job_0001',
   created_at: '2026-10-29T10:00:00Z',
