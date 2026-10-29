@@ -1,30 +1,46 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { ApiError, getJob } from '../api/mockApi';
-import type { Job } from '../api/types';
+import { ApiError, getJob, getRemediations, getReport } from '../api/mockApi';
+import type { Job, Remediation, Report } from '../api/types';
 import { StageList } from '../components/StageList';
+import { ReportView } from '../components/report/ReportView';
 
 // How often the page asks the API for the latest job status.
 const POLL_INTERVAL_MS = 1000;
 
-// Screen 2: shows the job's progress through the seven stages.
-export function StatusPage() {
+// The job page at /jobs/:jobId. It has two states:
+//   running   -> the seven-stage progress view, refreshed every second
+//   finished  -> the report, loaded once the job is completed (or partial)
+export function JobPage() {
   const { jobId = '' } = useParams();
+  // The key gives each job its own copy of the view, so moving to another
+  // job's URL starts from empty state instead of showing the old job.
+  return <JobView key={jobId} jobId={jobId} />;
+}
+
+function JobView({ jobId }: { jobId: string }) {
   const [job, setJob] = useState<Job | null>(null);
+  const [report, setReport] = useState<Report | null>(null);
+  const [remediations, setRemediations] = useState<Record<string, Remediation>>({});
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
 
-    // Fetch the status, then schedule the next fetch until the job has finished.
     async function poll() {
       try {
         const latest = await getJob(jobId);
         if (cancelled) return;
         setJob(latest);
+
         if (latest.status === 'queued' || latest.status === 'running') {
           timer = setTimeout(poll, POLL_INTERVAL_MS);
+        } else if (latest.status === 'completed' || latest.status === 'partial') {
+          const [fullReport, templates] = await Promise.all([getReport(jobId), getRemediations()]);
+          if (cancelled) return;
+          setReport(fullReport);
+          setRemediations(templates);
         }
       } catch (err) {
         if (!cancelled) setError(err instanceof ApiError ? err.message : 'Could not load the job.');
@@ -44,7 +60,8 @@ export function StatusPage() {
         <h2>Job not available</h2>
         <p className="error">{error}</p>
         <p>
-          Demo jobs only last until the page is refreshed. <Link to="/upload">Start a new one</Link>.
+          Demonstration jobs only last until the page is refreshed.{' '}
+          <Link to="/upload">Start a new one</Link>.
         </p>
       </section>
     );
@@ -52,24 +69,17 @@ export function StatusPage() {
 
   if (!job) return <p>Loading...</p>;
 
+  if (report) return <ReportView report={report} remediations={remediations} />;
+
   return (
     <section>
-      <h2>Analysis of {job.job_id}</h2>
+      <h2>Analysing {job.job_id}</h2>
       <p>
         Status: <strong>{job.status}</strong>
       </p>
       <StageList stages={job.stages} />
-
       {job.status === 'failed' && <p className="error">{job.error ?? 'The analysis stopped.'}</p>}
-
-      {job.status === 'completed' && (
-        <p className="actions">
-          <Link className="button" to={`/jobs/${job.job_id}/findings`}>
-            View findings
-          </Link>
-          <Link to={`/jobs/${job.job_id}/report`}>Open full report</Link>
-        </p>
-      )}
+      {(job.status === 'completed' || job.status === 'partial') && <p>Loading the report...</p>}
     </section>
   );
 }

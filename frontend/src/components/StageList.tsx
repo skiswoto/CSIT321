@@ -1,32 +1,17 @@
-import type { Stage, StageName, StageState } from '../api/types';
-
-// Readable names for the pipeline's code names.
-const STAGE_LABELS: Record<StageName, string> = {
-  submit_and_validate: 'Submit and validate',
-  static_inspection: 'Static inspection',
-  environment_setup: 'Environment setup',
-  runtime_tests: 'Runtime tests',
-  timing_analysis: 'Timing analysis',
-  findings: 'Findings',
-  report: 'Report',
-};
-
-const STATE_LABELS: Record<StageState, string> = {
-  pending: 'Waiting',
-  running: 'In progress',
-  done: 'Done',
-  failed: 'Failed',
-  skipped: 'Skipped',
-};
+import type { Stage } from '../api/types';
+import { STAGE_LABELS, STAGE_STATE_LABELS } from './labels';
 
 export function StageList({ stages }: { stages: Stage[] }) {
   return (
     <ol className="stage-list">
       {stages.map((stage, index) => (
-        <li key={stage.name} className={`stage stage-${stage.state}`}>
+        <li key={stage.name} className={`stage stage-${stage.state.toLowerCase()}`}>
           <span className="stage-number">{index + 1}</span>
-          <span className="stage-name">{STAGE_LABELS[stage.name]}</span>
-          <span className="stage-state">{STATE_LABELS[stage.state]}</span>
+          <span className="stage-name">
+            {STAGE_LABELS[stage.name]}
+            {stage.reason && <span className="stage-reason">{stage.reason}</span>}
+          </span>
+          <span className="stage-state">{STAGE_STATE_LABELS[stage.state]}</span>
         </li>
       ))}
     </ol>

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { ApiError, createJob } from '../api/mockApi';
+import { ApiError, MAX_UPLOAD_MB, createJob } from '../api/mockApi';
 import type { BuildType } from '../api/types';
 
 // Screen 1: submit an APK (and optionally its source) for analysis.
@@ -39,6 +39,10 @@ export function UploadPage() {
       <p>
         Upload a debug build of your own Android app as a single universal APK. Adding the source
         code is optional, but it lets the report point to exact files and lines.
+      </p>
+      <p className="hint">
+        Accepted: one .apk file, plus an optional .zip of the source. Split APKs and .aab bundles
+        are not supported. Maximum size: {MAX_UPLOAD_MB} MB (provisional).
       </p>
 
       <form className="upload-form" onSubmit={handleSubmit}>
@@ -105,7 +109,7 @@ export function UploadPage() {
       </form>
 
       <p className="hint">
-        Or open the <Link to="/jobs/job_0001/findings">example results</Link> without uploading.
+        Or open the <Link to="/jobs/job_0001">example report</Link> without uploading.
       </p>
     </section>
   );
