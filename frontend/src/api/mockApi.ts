@@ -90,7 +90,7 @@ export async function getJob(jobId: string): Promise<Job> {
   await delay();
 
   if (jobId === exampleReport.job_id) {
-    return { job_id: jobId, status: 'completed', stages: exampleReport.stages };
+    return { job_id: jobId, status: 'SUCCESS', stages: exampleReport.stages };
   }
 
   const job = jobs.get(jobId);
@@ -99,13 +99,13 @@ export async function getJob(jobId: string): Promise<Job> {
   }
 
   const stages = stagesAt(Date.now() - job.createdAt);
-  return { job_id: jobId, status: isFinished(stages) ? 'completed' : 'running', stages };
+  return { job_id: jobId, status: isFinished(stages) ? 'SUCCESS' : 'RUNNING', stages };
 }
 
 // GET /api/jobs/{job_id}/report
 export async function getReport(jobId: string): Promise<Report> {
   const job = await getJob(jobId);
-  if (job.status !== 'completed' && job.status !== 'partial') {
+  if (job.status !== 'SUCCESS' && job.status !== 'PARTIAL') {
     throw new ApiError('The report is not ready yet.');
   }
   return { ...exampleReport, job_id: jobId };
@@ -117,12 +117,12 @@ export async function listJobs(): Promise<JobSummary[]> {
 
   const example: JobSummary = {
     job_id: exampleReport.job_id,
-    status: 'completed',
+    status: 'SUCCESS',
     app_name: exampleReport.apk.package,
   };
   const created = [...jobs.entries()].map(([jobId, job]) => ({
     job_id: jobId,
-    status: isFinished(stagesAt(Date.now() - job.createdAt)) ? ('completed' as const) : ('running' as const),
+    status: isFinished(stagesAt(Date.now() - job.createdAt)) ? ('SUCCESS' as const) : ('RUNNING' as const),
     app_name: job.appName,
   }));
   return [example, ...created];

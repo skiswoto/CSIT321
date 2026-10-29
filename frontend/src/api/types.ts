@@ -4,11 +4,10 @@
 
 // ---------- Jobs and stages ----------
 
-// Job status values from PRD section 6.8.
-export type JobStatus = 'queued' | 'running' | 'partial' | 'failed' | 'skipped' | 'completed';
-
-// Stage states from PRD section 5.1.5.
+// Stage states from PRD section 5.1.5. PRD 6.8 uses the same six values for
+// jobs, so a job's overall status has the same type.
 export type StageState = 'PENDING' | 'RUNNING' | 'SUCCESS' | 'PARTIAL' | 'FAILED' | 'SKIPPED';
+export type JobStatus = StageState;
 
 // The seven pipeline stages, in the order the orchestrator runs them.
 export const STAGE_NAMES = [
@@ -34,7 +33,7 @@ export interface Job {
   job_id: string;
   status: JobStatus;
   stages: Stage[];
-  error?: string; // set when status is 'failed'
+  error?: string; // set when status is FAILED
 }
 
 // ---------- Findings schema (PRD section 5.1.4) ----------
