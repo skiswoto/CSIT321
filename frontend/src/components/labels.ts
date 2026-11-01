@@ -1,7 +1,7 @@
 // Readable labels and display order for schema values. Kept in one place so
 // every screen words things the same way.
 
-import type { FindingStatus, Severity, StageName, StageState } from '../api/types';
+import type { FindingStatus, Severity, StageName, StageState, Technique } from '../api/types';
 
 export const STAGE_LABELS: Record<StageName, string> = {
   submit_and_validate: 'Submit and validate',
@@ -9,14 +9,14 @@ export const STAGE_LABELS: Record<StageName, string> = {
   environment_setup: 'Environment setup',
   runtime_tests: 'Runtime tests',
   timing_analysis: 'Timing analysis',
-  findings: 'Findings',
+  findings: 'Findings and recommendations',
   report: 'Report',
 };
 
-// "Shown to the user as" column of PRD 5.1.5.
+// "Shown to the user as" column of PRD 5.1.5, worded as in PRD 8.3.
 export const STAGE_STATE_LABELS: Record<StageState, string> = {
   PENDING: 'Waiting',
-  RUNNING: 'In progress',
+  RUNNING: 'Running',
   SUCCESS: 'Completed',
   PARTIAL: 'Completed with limitations',
   FAILED: 'Failed',
@@ -29,6 +29,12 @@ export const STATUS_LABELS: Record<FindingStatus, string> = {
   INCONCLUSIVE: 'Inconclusive',
   NEEDS_DYNAMIC_CONFIRMATION: 'Needs dynamic confirmation',
   NOT_APPLICABLE: 'Not applicable',
+};
+
+export const TECHNIQUE_LABELS: Record<Technique, string> = {
+  static: 'Static',
+  dynamic: 'Dynamic',
+  inferred: 'Inferred',
 };
 
 // Most severe first.

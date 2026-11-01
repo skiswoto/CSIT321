@@ -26,6 +26,8 @@ export interface Stage {
   name: StageName;
   state: StageState;
   reason?: string; // why a stage was FAILED, PARTIAL or SKIPPED
+  started_at?: string; // ISO 8601, set once the stage starts (PRD 6.3)
+  ended_at?: string; // ISO 8601, set once the stage ends
 }
 
 // Response of GET /api/jobs/{job_id}
@@ -99,11 +101,18 @@ export interface Finding {
   rule_set_version: string;
 }
 
+// What was submitted: the APK alone, or the APK with its source (PRD 5.1.5, section A).
+export type InputType = 'apk' | 'apk_and_source';
+
+// Facts read from the APK. They are null when the APK could not be parsed.
 export interface ApkInfo {
   sha256: string;
-  package: string;
-  min_sdk: number;
-  target_sdk: number;
+  source_sha256?: string; // present when source was uploaded
+  input_type: InputType;
+  package: string | null;
+  version_name: string | null;
+  min_sdk: number | null;
+  target_sdk: number | null;
 }
 
 export interface Environment {
@@ -124,16 +133,15 @@ export interface AnalysisLimits {
 export interface Report {
   schema_version: string;
   job_id: string;
+  status: JobStatus; // the job's final state: SUCCESS, PARTIAL or FAILED
   created_at: string; // ISO 8601
   consent_confirmed: boolean;
   apk: ApkInfo;
-  environment: Environment;
-  // TODO(Shawn, Yi Hong): PRD 5.1.4's example groups stages as
-  // { static: {...}, dynamic: {...} }, but the status view uses the seven
-  // pipeline stages. Modelled as the seven stages until the report's stages
-  // object is settled.
+  // null when environment setup (stage 3) did not run, so no emulator was used.
+  environment: Environment | null;
+  // The seven stages, in the same shape as GET /api/jobs/{job_id}.
   stages: Stage[];
-  analysis_limits: AnalysisLimits;
+  analysis_limits: AnalysisLimits | null; // null when the APK could not be read
   findings: Finding[];
   // Counts worked out by the backend (FR-FND-10), so the screen and the JSON
   // export show the same numbers.
@@ -143,35 +151,35 @@ export interface Report {
   remediations: Record<string, Remediation>;
 }
 
-// TODO(Shawn, Yi Hong): proposed shape. PRD 5.1.4's example summary only
-// counts by status (detected, inconclusive, not_detected); FR-FND-10 asks for
-// counts by severity, status and technique, so this has all three.
+// Counts by severity, status and technique (FR-FND-10), as shown in PRD 5.1.4
+// "Report-level fields".
+// TODO(Yi Hong): confirm this shape.
 export interface Summary {
   by_severity: Record<Severity, number>; // DETECTED findings only
   by_status: Record<FindingStatus, number>;
   by_technique: Record<Technique, number>;
 }
 
-// A remediation template, referenced by a finding's remediation_id.
-// Note: FR-FND-11 says a template holds an explanation, a secure pattern, a
-// documentation reference and a re-test step. These fields cover the action,
-// re-test and reference only, as in the PRD 5.1.4 remediation table.
+// A remediation template, referenced by a finding's remediation_id. The four
+// parts follow FR-FND-11. The OWASP MASVS reference lives here, not on the
+// finding (PRD 7.5).
 export interface Remediation {
   remediation_id: string;
-  action: string;
-  retest: string;
-  reference: string;
+  explanation: string; // why the pattern is a problem
+  secure_pattern: string; // the fix, as a short code sketch
+  reference: string; // documentation, including the MASVS reference
+  retest: string; // how to check the fix worked
+  // FR-FND-11: text written with AI assistance must be labelled and reviewed.
+  ai_assisted: boolean;
+  reviewed: boolean;
 }
 
 // ---------- Requests and lists ----------
 
-export type BuildType = 'debug' | 'release';
-
-// Request body of POST /api/jobs (sent as multipart form data)
+// Request body of POST /api/jobs (sent as multipart form data, PRD 6.3)
 export interface CreateJobRequest {
   apk: File;
   source?: File;
-  build_type: BuildType;
   authorised: boolean;
 }
 

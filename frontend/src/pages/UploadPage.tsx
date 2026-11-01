@@ -1,17 +1,26 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { ApiError, MAX_UPLOAD_MB, createJob } from '../api/mockApi';
-import type { BuildType } from '../api/types';
+import { ApiError, DEMO_JOB_IDS, MAX_UPLOAD_MB, createJob } from '../api/mockApi';
 
-// Screen 1: submit an APK (and optionally its source) for analysis.
+// What each built-in demonstration job shows, for the links below the form.
+const DEMO_LINK_LABELS: Record<string, string> = {
+  job_0001: 'completed job',
+  job_0002: 'partial job (no runtime tests)',
+  job_0003: 'failed job',
+};
+
+// The upload page at /: submit an APK (and optionally its source) for analysis.
 export function UploadPage() {
   const navigate = useNavigate();
   const [apk, setApk] = useState<File | null>(null);
   const [source, setSource] = useState<File | null>(null);
-  const [buildType, setBuildType] = useState<BuildType>('debug');
   const [authorised, setAuthorised] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Submit stays disabled until an APK is chosen and the declaration is
+  // ticked (FR-SUB-02). The API checks both again.
+  const canSubmit = apk !== null && authorised && !submitting;
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -20,14 +29,10 @@ export function UploadPage() {
     setError(null);
     setSubmitting(true);
     try {
-      const { job_id } = await createJob({
-        apk,
-        source: source ?? undefined,
-        build_type: buildType,
-        authorised,
-      });
+      const { job_id } = await createJob({ apk, source: source ?? undefined, authorised });
       navigate(`/jobs/${job_id}`);
     } catch (err) {
+      // A rejected file creates no job. Show the reason so the user can try again.
       setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
       setSubmitting(false);
     }
@@ -51,8 +56,10 @@ export function UploadPage() {
           <input
             type="file"
             accept=".apk"
-            required
-            onChange={(e) => setApk(e.target.files?.[0] ?? null)}
+            onChange={(e) => {
+              setApk(e.target.files?.[0] ?? null);
+              setError(null);
+            }}
           />
         </label>
 
@@ -61,55 +68,38 @@ export function UploadPage() {
           <input
             type="file"
             accept=".zip"
-            onChange={(e) => setSource(e.target.files?.[0] ?? null)}
+            onChange={(e) => {
+              setSource(e.target.files?.[0] ?? null);
+              setError(null);
+            }}
           />
         </label>
 
-        <fieldset>
-          <legend>Build type</legend>
-          <label className="inline">
-            <input
-              type="radio"
-              name="build_type"
-              checked={buildType === 'debug'}
-              onChange={() => setBuildType('debug')}
-            />
-            Debug
-          </label>
-          <label className="inline">
-            <input
-              type="radio"
-              name="build_type"
-              checked={buildType === 'release'}
-              onChange={() => setBuildType('release')}
-            />
-            Release
-          </label>
-        </fieldset>
-
         <label className="inline">
-          <input
-            type="checkbox"
-            required
-            checked={authorised}
-            onChange={(e) => setAuthorised(e.target.checked)}
-          />
+          <input type="checkbox" checked={authorised} onChange={(e) => setAuthorised(e.target.checked)} />
           I own this app or am authorised to test it
         </label>
 
         {error && (
           <p className="error" role="alert">
-            {error}
+            Not accepted: {error}
           </p>
         )}
 
-        <button type="submit" disabled={submitting}>
+        <button type="submit" disabled={!canSubmit}>
           {submitting ? 'Submitting...' : 'Start analysis'}
         </button>
       </form>
 
       <p className="hint">
-        Or open the <Link to="/jobs/job_0001">example report</Link> without uploading.
+        Or open a demonstration job without uploading:{' '}
+        {DEMO_JOB_IDS.map((jobId, index) => (
+          <span key={jobId}>
+            {index > 0 && ', '}
+            <Link to={`/jobs/${jobId}`}>{DEMO_LINK_LABELS[jobId] ?? jobId}</Link>
+          </span>
+        ))}
+        .
       </p>
     </section>
   );

@@ -6,12 +6,13 @@ import { StageList } from '../components/StageList';
 import { STAGE_STATE_LABELS } from '../components/labels';
 import { ReportView } from '../components/report/ReportView';
 
-// How often the page asks the API for the latest job status.
-const POLL_INTERVAL_MS = 1000;
+// How often the page asks the API for the latest job status (PRD 6.2).
+const POLL_INTERVAL_MS = 2000;
 
 // The job page at /jobs/:jobId. It has two states:
-//   running   -> the seven-stage progress view, refreshed every second
-//   finished  -> the report, loaded once the job is SUCCESS (or PARTIAL)
+//   running   -> the seven-stage progress view, refreshed every two seconds
+//   finished  -> the report, loaded once the job is SUCCESS, PARTIAL or FAILED.
+//                Stages 6 and 7 always run, so even a failed job has a report.
 export function JobPage() {
   const { jobId = '' } = useParams();
   // The key gives each job its own copy of the view, so moving to another
@@ -36,7 +37,7 @@ function JobView({ jobId }: { jobId: string }) {
 
         if (latest.status === 'PENDING' || latest.status === 'RUNNING') {
           timer = setTimeout(poll, POLL_INTERVAL_MS);
-        } else if (latest.status === 'SUCCESS' || latest.status === 'PARTIAL') {
+        } else {
           const fullReport = await getReport(jobId);
           if (cancelled) return;
           setReport(fullReport);
@@ -60,7 +61,7 @@ function JobView({ jobId }: { jobId: string }) {
         <p className="error">{error}</p>
         <p>
           Demonstration jobs only last until the page is refreshed.{' '}
-          <Link to="/upload">Start a new one</Link>.
+          <Link to="/">Start a new one</Link>.
         </p>
       </section>
     );
@@ -77,8 +78,7 @@ function JobView({ jobId }: { jobId: string }) {
         Status: <strong>{STAGE_STATE_LABELS[job.status]}</strong>
       </p>
       <StageList stages={job.stages} />
-      {job.status === 'FAILED' && <p className="error">{job.error ?? 'The analysis stopped.'}</p>}
-      {(job.status === 'SUCCESS' || job.status === 'PARTIAL') && <p>Loading the report...</p>}
+      {job.status !== 'PENDING' && job.status !== 'RUNNING' && <p>Loading the report...</p>}
     </section>
   );
 }

@@ -112,13 +112,22 @@ export function FindingCard({ finding, remediation }: FindingCardProps) {
       {remediation && (
         <>
           <h4>Recommended fix</h4>
-          <p>{remediation.action}</p>
+          <p>{remediation.explanation}</p>
+          <pre className="evidence-code">{remediation.secure_pattern}</pre>
           <p>
             <strong>Re-test:</strong> {remediation.retest}
           </p>
           <p className="finding-reference">
             {remediation.remediation_id} · {remediation.reference}
           </p>
+          {/* FR-FND-11: AI-assisted template text is labelled until a team member reviews it. */}
+          {remediation.ai_assisted && (
+            <p className="hint">
+              {remediation.reviewed
+                ? 'Written with AI assistance and reviewed by the team.'
+                : 'Draft written with AI assistance. Not yet reviewed by the team.'}
+            </p>
+          )}
         </>
       )}
 

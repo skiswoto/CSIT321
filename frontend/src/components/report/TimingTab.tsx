@@ -1,19 +1,29 @@
-import { isTimingEvidence, type Environment, type Finding } from '../../api/types';
+import { isTimingEvidence, type Environment, type Finding, type Stage } from '../../api/types';
 import { TimingEvidenceView } from '../FindingCard';
 import { SeverityBadge, StatusBadge } from '../SeverityBadge';
+import { STAGE_STATE_LABELS } from '../labels';
 
 interface TimingTabProps {
   findings: Finding[];
-  environment: Environment;
+  environment: Environment | null;
+  timingStage: Stage | undefined;
 }
 
 // Timing results (report section F): each timing test with its measured
 // interval, numbers and the limitation statement.
-export function TimingTab({ findings, environment }: TimingTabProps) {
+// TODO(Shawn, Nicholas): the timing evidence fields are a placeholder until
+// the runtime spike settles them. FR-RPT-08 also asks for a distribution
+// chart, the number of kept trials and the detection floor.
+export function TimingTab({ findings, environment, timingStage }: TimingTabProps) {
   const timing = findings.filter((f) => f.evidence && isTimingEvidence(f.evidence));
 
-  if (timing.length === 0) {
-    return <p>No timing tests ran for this job.</p>;
+  if (timing.length === 0 || !environment) {
+    // Say why there are no timing results, rather than showing an empty tab.
+    const why =
+      timingStage && timingStage.state !== 'SUCCESS'
+        ? `Timing analysis: ${STAGE_STATE_LABELS[timingStage.state].toLowerCase()}. ${timingStage.reason ?? ''}`
+        : 'No timing test produced a result for this job.';
+    return <p>{why}</p>;
   }
 
   return (

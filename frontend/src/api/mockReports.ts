@@ -1,25 +1,59 @@
-import type { Report } from './types';
+import type { Finding, Report, Stage, StageName, StageState } from './types';
 
-// Demonstration report in the PRD 5.1.4 shape, for the team's controlled test
-// app. Every value here is made up: no app has been analysed. The findings are
-// chosen so the UI has to handle each status (DETECTED, NOT_DETECTED,
-// INCONCLUSIVE, NEEDS_DYNAMIC_CONFIRMATION, NOT_APPLICABLE) and several
-// severities. The UI labels all of it as demonstration data.
+// The three demonstration jobs, one for each final job state (PRD 8.6):
+//   job_0001  SUCCESS  every stage ran
+//   job_0002  PARTIAL  stages 3 to 5 were not performed, so only static findings
+//   job_0003  FAILED   the APK could not be parsed in stage 2
+//
+// Every value here is made up: no app has been analysed. The findings are
+// chosen so the UI has to handle each status and several severities. The UI
+// labels all of it as demonstration data.
+
+// The summary and the fix templates are added by getReport in mockApi.ts, the
+// same way the real backend adds them when it builds a report.
+export type MockReport = Omit<Report, 'summary' | 'remediations'>;
 
 // Tool versions are pinned in the proof of concept; until then they are TBC.
 const TBC = 'TBC (pinned in PoC)';
 const RULE_SET = '0.1';
 
-// The summary and the fix templates are added by getReport in mockApi.ts, the
-// same way the real backend adds them when it builds a report.
-export const exampleReport: Omit<Report, 'summary' | 'remediations'> = {
+const APK_SHA256 = '3f9a1c0e7b2d4a6f8e1c3b5d7a9f0e2c4b6d8a1f3e5c7b9d0a2f4e6c8b1d3a5f';
+
+// One planned stage: its final state, how long it took and, if it did not
+// simply succeed, why.
+interface StagePlan {
+  name: StageName;
+  state: StageState;
+  seconds?: number; // left out for skipped stages
+  reason?: string;
+}
+
+// Turns a list of planned stages into stages with start and end times, each
+// one starting when the one before it ended. Skipped stages have no times.
+function timeline(startIso: string, plan: StagePlan[]): Stage[] {
+  let time = Date.parse(startIso);
+  return plan.map(({ name, state, seconds = 0, reason }): Stage => {
+    if (state === 'SKIPPED') return { name, state, reason };
+    const started_at = new Date(time).toISOString();
+    time += seconds * 1000;
+    return { name, state, reason, started_at, ended_at: new Date(time).toISOString() };
+  });
+}
+
+// ---------- job_0001: SUCCESS ----------
+
+const successReport: MockReport = {
   schema_version: '1.0',
   job_id: 'job_0001',
+  status: 'SUCCESS',
   created_at: '2026-10-29T10:00:00Z',
   consent_confirmed: true,
   apk: {
-    sha256: '3f9a1c0e7b2d4a6f8e1c3b5d7a9f0e2c4b6d8a1f3e5c7b9d0a2f4e6c8b1d3a5f',
+    sha256: APK_SHA256,
+    source_sha256: '9c2e4a6b8d0f1e3c5a7b9d2f4e6a8c0b1d3f5e7a9c2b4d6f8e0a1c3b5d7f9e2a',
+    input_type: 'apk_and_source',
     package: 'com.fyp.biotest',
+    version_name: '1.0 (debug)',
     min_sdk: 28,
     target_sdk: 34,
   },
@@ -30,16 +64,15 @@ export const exampleReport: Omit<Report, 'summary' | 'remediations'> = {
     image: 'google_apis',
     instrumentation: 'frida',
   },
-  // TODO(Shawn, Yi Hong): seven stages for now; see the note in types.ts.
-  stages: [
-    { name: 'submit_and_validate', state: 'SUCCESS' },
-    { name: 'static_inspection', state: 'SUCCESS' },
-    { name: 'environment_setup', state: 'SUCCESS' },
-    { name: 'runtime_tests', state: 'SUCCESS' },
-    { name: 'timing_analysis', state: 'SUCCESS' },
-    { name: 'findings', state: 'SUCCESS' },
-    { name: 'report', state: 'SUCCESS' },
-  ],
+  stages: timeline('2026-10-29T10:00:00Z', [
+    { name: 'submit_and_validate', state: 'SUCCESS', seconds: 3 },
+    { name: 'static_inspection', state: 'SUCCESS', seconds: 42 },
+    { name: 'environment_setup', state: 'SUCCESS', seconds: 95 },
+    { name: 'runtime_tests', state: 'SUCCESS', seconds: 180 },
+    { name: 'timing_analysis', state: 'SUCCESS', seconds: 240 },
+    { name: 'findings', state: 'SUCCESS', seconds: 1 },
+    { name: 'report', state: 'SUCCESS', seconds: 2 },
+  ]),
   analysis_limits: { obfuscated: false, native_libs: 0, dynamic_class_loading: false },
   findings: [
     {
@@ -199,3 +232,96 @@ export const exampleReport: Omit<Report, 'summary' | 'remediations'> = {
     },
   ],
 };
+
+// ---------- job_0002: PARTIAL ----------
+
+const NO_EMULATOR = 'No emulator was available on the analysis host, so the app could not be run.';
+
+// Same app, but stages 3 to 5 were skipped, so only the static findings exist
+// and SB-11 stays a candidate that needs dynamic confirmation.
+const partialReport: MockReport = {
+  ...successReport,
+  job_id: 'job_0002',
+  status: 'PARTIAL',
+  created_at: '2026-10-30T14:20:00Z',
+  apk: { ...successReport.apk, source_sha256: undefined, input_type: 'apk' },
+  environment: null,
+  stages: timeline('2026-10-30T14:20:00Z', [
+    { name: 'submit_and_validate', state: 'SUCCESS', seconds: 3 },
+    { name: 'static_inspection', state: 'SUCCESS', seconds: 40 },
+    { name: 'environment_setup', state: 'SKIPPED', reason: NO_EMULATOR },
+    { name: 'runtime_tests', state: 'SKIPPED', reason: NO_EMULATOR },
+    { name: 'timing_analysis', state: 'SKIPPED', reason: NO_EMULATOR },
+    { name: 'findings', state: 'SUCCESS', seconds: 1 },
+    { name: 'report', state: 'SUCCESS', seconds: 2 },
+  ]),
+  findings: successReport.findings
+    .filter((f) => f.technique === 'static')
+    .map((f) =>
+      f.rule_id === 'SB-11'
+        ? { ...f, next_step: 'Run timing test T-02 when an emulator is available.' }
+        : f,
+    ),
+};
+
+// ---------- job_0003: FAILED ----------
+
+const PARSE_FAILED = 'The APK could not be parsed: the decompiler could not read classes.dex.';
+
+// Every static rule that would have run is reported as INCONCLUSIVE, never
+// NOT_DETECTED, because none of them could run (FR-FND-02).
+function couldNotRun(finding: Finding): Finding {
+  return {
+    rule_id: finding.rule_id,
+    title: finding.title,
+    status: 'INCONCLUSIVE',
+    validation_level: 'Not assessed',
+    confidence: 'low',
+    technique: 'static',
+    reason: 'The APK could not be parsed, so this rule could not run.',
+    next_step: 'Check that the file is a valid debug APK and upload it again.',
+    tool: finding.tool,
+    tool_version: finding.tool_version,
+    rule_set_version: finding.rule_set_version,
+  };
+}
+
+// Stages 6 and 7 always run (PRD 5.1.5), so a failed job still has a report.
+// It says that nothing could be analysed and why.
+const failedReport: MockReport = {
+  schema_version: '1.0',
+  job_id: 'job_0003',
+  status: 'FAILED',
+  created_at: '2026-10-31T09:05:00Z',
+  consent_confirmed: true,
+  apk: {
+    sha256: 'b7d1e3f5a9c2b4d6f8e0a1c3b5d7f9e2a4c6b8d0f1e3a5c7b9d2f4e6a8c0b1d3',
+    input_type: 'apk',
+    package: null,
+    version_name: null,
+    min_sdk: null,
+    target_sdk: null,
+  },
+  environment: null,
+  stages: timeline('2026-10-31T09:05:00Z', [
+    { name: 'submit_and_validate', state: 'SUCCESS', seconds: 2 },
+    { name: 'static_inspection', state: 'FAILED', seconds: 12, reason: PARSE_FAILED },
+    { name: 'environment_setup', state: 'SKIPPED', reason: 'Static inspection failed, so triage could not run.' },
+    { name: 'runtime_tests', state: 'SKIPPED', reason: 'Static inspection failed, so triage could not run.' },
+    { name: 'timing_analysis', state: 'SKIPPED', reason: 'Static inspection failed, so triage could not run.' },
+    { name: 'findings', state: 'SUCCESS', seconds: 1 },
+    { name: 'report', state: 'SUCCESS', seconds: 1 },
+  ]),
+  analysis_limits: null,
+  findings: successReport.findings.filter((f) => f.technique === 'static').map(couldNotRun),
+};
+
+// The built-in demonstration jobs, keyed by job ID.
+export const MOCK_REPORTS: Record<string, MockReport> = {
+  job_0001: successReport,
+  job_0002: partialReport,
+  job_0003: failedReport,
+};
+
+// The completed report that new uploads show once their stages finish.
+export const exampleReport = successReport;
