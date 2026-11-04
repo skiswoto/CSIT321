@@ -1,0 +1,80 @@
+{
+  "apk": "app-debug.apk",
+  "package": "com.fyp2608.biov",
+  "launcher": "com.fyp2608.biov.LaunchPromptActivity",
+  "activities": [
+    {
+      "activity": "com.fyp2608.biov.LaunchPromptActivity",
+      "launcher": true,
+      "exported": true,
+      "deep_links": []
+    },
+    {
+      "activity": "com.fyp2608.biov.CryptoPromptActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.fyp2608.biov.SecretActivity",
+      "launcher": false,
+      "exported": true,
+      "deep_links": []
+    }
+  ],
+  "prompt_calls": [
+    {
+      "api": "androidx BiometricPrompt",
+      "called_from": "com.fyp2608.biov.LaunchPromptActivity.showPrompt",
+      "crypto_object": false,
+      "sb02_no_crypto_object": true,
+      "screen": {
+        "kind": "activity",
+        "activity": "com.fyp2608.biov.LaunchPromptActivity",
+        "launcher": true,
+        "exported": true,
+        "deep_links": []
+      },
+      "triggers": [
+        "lifecycle"
+      ],
+      "trigger_paths": [
+        {
+          "kind": "lifecycle",
+          "path": [
+            "com.fyp2608.biov.LaunchPromptActivity.onCreate",
+            "com.fyp2608.biov.LaunchPromptActivity.showPrompt"
+          ]
+        }
+      ]
+    },
+    {
+      "api": "androidx BiometricPrompt",
+      "called_from": "com.fyp2608.biov.CryptoPromptActivity.showPrompt",
+      "crypto_object": true,
+      "sb02_no_crypto_object": false,
+      "screen": {
+        "kind": "activity",
+        "activity": "com.fyp2608.biov.CryptoPromptActivity",
+        "launcher": false,
+        "exported": false,
+        "deep_links": []
+      },
+      "triggers": [
+        "user action"
+      ],
+      "trigger_paths": [
+        {
+          "kind": "user action",
+          "path": [
+            "com.fyp2608.biov.CryptoPromptActivity$$ExternalSyntheticLambda0.onClick",
+            "com.fyp2608.biov.CryptoPromptActivity.onCreate$lambda$1$lambda$0",
+            "com.fyp2608.biov.CryptoPromptActivity.showPrompt"
+          ]
+        }
+      ]
+    }
+  ],
+  "library_internal_calls_skipped": 5,
+  "seconds": 3.65
+}

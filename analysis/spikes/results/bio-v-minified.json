@@ -1,0 +1,167 @@
+{
+  "apk": "app-minified.apk",
+  "package": "com.fyp2608.biov",
+  "launcher": "com.fyp2608.biov.LaunchPromptActivity",
+  "activities": [
+    {
+      "activity": "com.fyp2608.biov.LaunchPromptActivity",
+      "launcher": true,
+      "exported": true,
+      "deep_links": []
+    },
+    {
+      "activity": "com.fyp2608.biov.CryptoPromptActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.fyp2608.biov.SecretActivity",
+      "launcher": false,
+      "exported": true,
+      "deep_links": []
+    }
+  ],
+  "prompt_calls": [
+    {
+      "api": "framework BiometricPrompt",
+      "called_from": "l5.a",
+      "crypto_object": true,
+      "sb02_no_crypto_object": false,
+      "screen": {
+        "kind": "activity",
+        "activity": "com.fyp2608.biov.LaunchPromptActivity",
+        "launcher": true,
+        "exported": true,
+        "deep_links": []
+      },
+      "triggers": [
+        "lifecycle",
+        "other",
+        "user action"
+      ],
+      "trigger_paths": [
+        {
+          "kind": "other",
+          "path": [
+            "p5.run",
+            "q5.R",
+            "l5.a"
+          ]
+        },
+        {
+          "kind": "user action",
+          "path": [
+            "d8.onClick",
+            "y5.a",
+            "q5.R",
+            "l5.a"
+          ]
+        },
+        {
+          "kind": "lifecycle",
+          "path": [
+            "com.fyp2608.biov.LaunchPromptActivity.onCreate",
+            "y5.a",
+            "q5.R",
+            "l5.a"
+          ]
+        }
+      ]
+    },
+    {
+      "api": "framework BiometricPrompt",
+      "called_from": "l5.b",
+      "crypto_object": false,
+      "sb02_no_crypto_object": true,
+      "screen": {
+        "kind": "activity",
+        "activity": "com.fyp2608.biov.LaunchPromptActivity",
+        "launcher": true,
+        "exported": true,
+        "deep_links": []
+      },
+      "triggers": [
+        "lifecycle",
+        "other",
+        "user action"
+      ],
+      "trigger_paths": [
+        {
+          "kind": "other",
+          "path": [
+            "p5.run",
+            "q5.R",
+            "l5.b"
+          ]
+        },
+        {
+          "kind": "user action",
+          "path": [
+            "d8.onClick",
+            "y5.a",
+            "q5.R",
+            "l5.b"
+          ]
+        },
+        {
+          "kind": "lifecycle",
+          "path": [
+            "com.fyp2608.biov.LaunchPromptActivity.onCreate",
+            "y5.a",
+            "q5.R",
+            "l5.b"
+          ]
+        }
+      ]
+    },
+    {
+      "api": "FingerprintManager (deprecated)",
+      "called_from": "ra.a",
+      "crypto_object": true,
+      "sb02_no_crypto_object": false,
+      "screen": {
+        "kind": "activity",
+        "activity": "com.fyp2608.biov.LaunchPromptActivity",
+        "launcher": true,
+        "exported": true,
+        "deep_links": []
+      },
+      "triggers": [
+        "lifecycle",
+        "other",
+        "user action"
+      ],
+      "trigger_paths": [
+        {
+          "kind": "other",
+          "path": [
+            "p5.run",
+            "q5.R",
+            "ra.a"
+          ]
+        },
+        {
+          "kind": "user action",
+          "path": [
+            "d8.onClick",
+            "y5.a",
+            "q5.R",
+            "ra.a"
+          ]
+        },
+        {
+          "kind": "lifecycle",
+          "path": [
+            "com.fyp2608.biov.LaunchPromptActivity.onCreate",
+            "y5.a",
+            "q5.R",
+            "ra.a"
+          ]
+        }
+      ]
+    }
+  ],
+  "library_internal_calls_skipped": 0,
+  "seconds": 0.46
+}

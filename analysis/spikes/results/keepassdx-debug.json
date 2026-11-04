@@ -1,0 +1,198 @@
+{
+  "apk": "app-libre-debug.apk",
+  "package": "com.kunzisoft.keepass.libre",
+  "launcher": "com.kunzisoft.keepass.activities.FileDatabaseSelectActivity",
+  "activities": [
+    {
+      "activity": "com.kunzisoft.keepass.activities.FileDatabaseSelectActivity",
+      "launcher": true,
+      "exported": true,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.activities.MainCredentialActivity",
+      "launcher": false,
+      "exported": true,
+      "deep_links": [
+        "file://",
+        "content://",
+        "file://",
+        "content://"
+      ]
+    },
+    {
+      "activity": "com.kunzisoft.keepass.activities.GroupActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.activities.EntryActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.activities.IconPickerActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.activities.KeyGeneratorActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.activities.ImageViewerActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.activities.EntryEditActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.activities.AboutActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.settings.SettingsActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.settings.DeviceUnlockSettingsActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.settings.MagikeyboardSettingsActivity",
+      "launcher": false,
+      "exported": true,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.settings.AutofillSettingsActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.settings.PasskeysSettingsActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.settings.AppearanceSettingsActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.credentialprovider.activity.HardwareKeyActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.credentialprovider.activity.AutofillLauncherActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.credentialprovider.activity.EntrySelectionLauncherActivity",
+      "launcher": false,
+      "exported": true,
+      "deep_links": [
+        "otpauth://"
+      ]
+    },
+    {
+      "activity": "com.kunzisoft.keepass.credentialprovider.activity.PasswordLauncherActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.kunzisoft.keepass.credentialprovider.activity.PasskeyLauncherActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    }
+  ],
+  "prompt_calls": [
+    {
+      "api": "androidx BiometricPrompt",
+      "called_from": "com.kunzisoft.keepass.activities.dialogs.CheckDeviceCredentialDialogFragment.onCreate",
+      "crypto_object": false,
+      "sb02_no_crypto_object": true,
+      "screen": {
+        "kind": "fragment",
+        "fragment": "com.kunzisoft.keepass.activities.dialogs.CheckDeviceCredentialDialogFragment",
+        "host_activities": []
+      },
+      "triggers": [
+        "lifecycle"
+      ],
+      "trigger_paths": [
+        {
+          "kind": "lifecycle",
+          "path": [
+            "com.kunzisoft.keepass.activities.dialogs.CheckDeviceCredentialDialogFragment.onCreate"
+          ]
+        }
+      ]
+    },
+    {
+      "api": "androidx BiometricPrompt",
+      "called_from": "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$openPrompt$1.invokeSuspend",
+      "crypto_object": true,
+      "sb02_no_crypto_object": false,
+      "screen": {
+        "kind": "fragment",
+        "fragment": "com.kunzisoft.keepass.biometric.DeviceUnlockFragment",
+        "host_activities": [
+          "com.kunzisoft.keepass.activities.MainCredentialActivity"
+        ]
+      },
+      "triggers": [
+        "lifecycle"
+      ],
+      "trigger_paths": [
+        {
+          "kind": "lifecycle",
+          "path": [
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment.onViewCreated (creates it)",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$onViewCreated$1.invoke",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$onViewCreated$1.invoke",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$onViewCreated$1.invokeSuspend (creates it)",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$onViewCreated$1$1.invoke",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$onViewCreated$1$1.invoke",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$onViewCreated$1$1.invokeSuspend (creates it)",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$onViewCreated$1$1$1.emit",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$onViewCreated$1$1$1.emit",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment.access$manageDeviceCredentialPrompt",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment.manageDeviceCredentialPrompt",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment.openPrompt (creates it)",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$openPrompt$1.invoke",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$openPrompt$1.invoke",
+            "com.kunzisoft.keepass.biometric.DeviceUnlockFragment$openPrompt$1.invokeSuspend"
+          ]
+        }
+      ]
+    }
+  ],
+  "library_internal_calls_skipped": 4,
+  "seconds": 12.21
+}

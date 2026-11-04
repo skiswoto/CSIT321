@@ -1,0 +1,195 @@
+{
+  "apk": "app-debug.apk",
+  "package": "com.beemdevelopment.aegis.debug",
+  "launcher": "com.beemdevelopment.aegis.ui.MainActivity",
+  "activities": [
+    {
+      "activity": "com.beemdevelopment.aegis.ui.TransferEntriesActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.AboutActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.ImportEntriesActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.MainActivity",
+      "launcher": true,
+      "exported": true,
+      "deep_links": [
+        "otpauth://"
+      ]
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.ScannerActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.EditEntryActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.IntroActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.AuthActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.PreferencesActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.GroupManagerActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.AssignIconsActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.LicensesActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.PanicResponderActivity",
+      "launcher": false,
+      "exported": true,
+      "deep_links": []
+    },
+    {
+      "activity": "com.beemdevelopment.aegis.ui.ExitActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    },
+    {
+      "activity": "com.mikepenz.aboutlibraries.ui.LibsActivity",
+      "launcher": false,
+      "exported": false,
+      "deep_links": []
+    }
+  ],
+  "prompt_calls": [
+    {
+      "api": "androidx BiometricPrompt",
+      "called_from": "com.beemdevelopment.aegis.helpers.BiometricSlotInitializer.authenticate",
+      "crypto_object": true,
+      "sb02_no_crypto_object": false,
+      "screen": {
+        "kind": "fragment",
+        "fragment": "com.beemdevelopment.aegis.ui.fragments.preferences.SecurityPreferencesFragment",
+        "host_activities": []
+      },
+      "triggers": [
+        "other",
+        "user action"
+      ],
+      "trigger_paths": [
+        {
+          "kind": "user action",
+          "path": [
+            "com.beemdevelopment.aegis.ui.fragments.preferences.SecurityPreferencesFragment$$ExternalSyntheticLambda3.onPreferenceChange",
+            "com.beemdevelopment.aegis.ui.fragments.preferences.SecurityPreferencesFragment.$r8$lambda$q1q2ZhrY7OOfNXQxh2oAWKIVDYA",
+            "com.beemdevelopment.aegis.ui.fragments.preferences.SecurityPreferencesFragment.lambda$onCreatePreferences$5",
+            "com.beemdevelopment.aegis.helpers.BiometricSlotInitializer.authenticate"
+          ]
+        },
+        {
+          "kind": "other",
+          "path": [
+            "com.beemdevelopment.aegis.ui.intro.SlideFragment.goToNextSlide",
+            "com.beemdevelopment.aegis.ui.intro.IntroBaseActivity.goToNextSlide",
+            "com.beemdevelopment.aegis.ui.slides.SecuritySetupSlide.onNotFinishedError",
+            "com.beemdevelopment.aegis.ui.slides.SecuritySetupSlide.showBiometricPrompt",
+            "com.beemdevelopment.aegis.helpers.BiometricSlotInitializer.authenticate"
+          ]
+        },
+        {
+          "kind": "user action",
+          "path": [
+            "com.beemdevelopment.aegis.ui.intro.IntroBaseActivity$$ExternalSyntheticLambda1.onClick",
+            "com.beemdevelopment.aegis.ui.intro.IntroBaseActivity.$r8$lambda$9vizLwAUHFTo_9U5FeRhPfIaGZg",
+            "com.beemdevelopment.aegis.ui.intro.IntroBaseActivity.lambda$onCreate$1",
+            "com.beemdevelopment.aegis.ui.intro.IntroBaseActivity.goToNextSlide",
+            "com.beemdevelopment.aegis.ui.slides.SecuritySetupSlide.onNotFinishedError",
+            "com.beemdevelopment.aegis.ui.slides.SecuritySetupSlide.showBiometricPrompt",
+            "com.beemdevelopment.aegis.helpers.BiometricSlotInitializer.authenticate"
+          ]
+        }
+      ]
+    },
+    {
+      "api": "androidx BiometricPrompt",
+      "called_from": "com.beemdevelopment.aegis.ui.AuthActivity.showBiometricPrompt",
+      "crypto_object": true,
+      "sb02_no_crypto_object": false,
+      "screen": {
+        "kind": "activity",
+        "activity": "com.beemdevelopment.aegis.ui.AuthActivity",
+        "launcher": false,
+        "exported": false,
+        "deep_links": []
+      },
+      "triggers": [
+        "lifecycle",
+        "user action"
+      ],
+      "trigger_paths": [
+        {
+          "kind": "lifecycle",
+          "path": [
+            "com.beemdevelopment.aegis.ui.AuthActivity.onResume",
+            "com.beemdevelopment.aegis.ui.AuthActivity.showBiometricPrompt"
+          ]
+        },
+        {
+          "kind": "user action",
+          "path": [
+            "com.beemdevelopment.aegis.ui.AuthActivity$$ExternalSyntheticLambda3.onClick",
+            "com.beemdevelopment.aegis.ui.AuthActivity.$r8$lambda$ESZtTLa1L5r7JaKCiE6vMX2HeYg",
+            "com.beemdevelopment.aegis.ui.AuthActivity.lambda$onCreate$4",
+            "com.beemdevelopment.aegis.ui.AuthActivity.showBiometricPrompt"
+          ]
+        },
+        {
+          "kind": "user action",
+          "path": [
+            "com.beemdevelopment.aegis.ui.AuthActivity$$ExternalSyntheticLambda7.onClick",
+            "com.beemdevelopment.aegis.ui.AuthActivity.$r8$lambda$tD2xIps1K0YX5dfDALfMbTFcjn4",
+            "com.beemdevelopment.aegis.ui.AuthActivity.lambda$onCreate$3",
+            "com.beemdevelopment.aegis.ui.AuthActivity.showBiometricPrompt"
+          ]
+        }
+      ]
+    }
+  ],
+  "library_internal_calls_skipped": 5,
+  "seconds": 17.07
+}

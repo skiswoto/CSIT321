@@ -8,3 +8,15 @@ dist/
 # Local planning docs (kept out of the repo)
 CLAUDE.md
 docs/
+
+# Python
+analysis/.venv/
+__pycache__/
+
+# Android builds (APKs are never committed)
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+*.aab

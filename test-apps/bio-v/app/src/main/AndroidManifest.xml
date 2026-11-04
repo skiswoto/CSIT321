@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
+    <application
+        android:label="Bio-V"
+        android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
+
+        <!-- Shows the prompt as soon as it opens, without a CryptoObject (VS04). -->
+        <activity
+            android:name=".LaunchPromptActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Shows the prompt from a button, bound to a Keystore key. -->
+        <activity
+            android:name=".CryptoPromptActivity"
+            android:exported="false" />
+
+        <!-- The screen behind the prompt, wrongly exported (VS07). -->
+        <activity
+            android:name=".SecretActivity"
+            android:exported="true" />
+    </application>
+</manifest>
